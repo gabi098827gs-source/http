@@ -28,6 +28,8 @@
 ## Atividade 1 — Primeira captura (`http://example.com`)
 
 **Captura de tela:** `evidencias/atv1_sessao.png`
+<img width="1596" height="790" alt="image" src="https://github.com/user-attachments/assets/de57b7ee-7cf9-4cc7-b900-b7fa28a4301d" />
+
 
 **Request-line enviada:**
 
@@ -39,25 +41,35 @@
 
 ```http
 [colar aqui, ex: HTTP/1.1 200 OK]
+<img width="1596" height="790" alt="image" src="https://github.com/user-attachments/assets/7d6a3036-9ce0-4e76-904d-0760259c2cbf" />
+
 ```
 
 ### Pergunta 1.1
 > Quantos cabeçalhos o navegador enviou no request? Liste-os.
 
 **Resposta:**
-[número total]
+[7]
 
 Cabeçalhos:
-- [cabeçalho 1]
-- [cabeçalho 2]
-- ...
 
+Host: example.com
+
+Connection: keep-alive
+
+Upgrade-Insecure-Requests: 1
+
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36
+
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,/;q=0.8,application/signed-exchange;v=b3;q=0.7
+
+Accept-Encoding: gzip, deflate
+
+Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7
 ### Pergunta 1.2
 > Qual foi o `Content-Length` da resposta? Se ele não apareceu, registre `Transfer-Encoding`, versão do protocolo ou outro indício observado. O corpo retornado é HTML, texto puro, JSON ou binário? Como você descobriu?
 
-**Resposta:** [...]
-
----
+O cabeçalho Content-Length não está presente na resposta, pois foi utilizado o cabeçalho Transfer-Encoding: chunked, indicando que o corpo foi enviado em blocos de tamanho variável. O corpo retornado é um documento HTML, conforme identificado pelo cabeçalho Content-Type: text/html, mas ele se apresenta inicialmente em formato binário comprimido devido ao uso de Content-Encoding: gzip. Essa característica é confirmada visualmente pelos caracteres ilegíveis na aba "Raw" e pelo aviso do Fiddler informando que o corpo da resposta precisa ser decodificado.
 
 ## Atividade 2 — Anatomia de um GET (`http://httpbin.org/get?...`)
 
