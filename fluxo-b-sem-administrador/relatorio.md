@@ -205,65 +205,80 @@ custname=Maria&custtel=13981465780&custemail=mm6@gmail.com&size=medium&topping=o
 
 **Captura de tela (lista do Fiddler com as 7 sessões):** `evidencias/atv4_lista.png`
 
+<img width="1426" height="634" alt="image" src="https://github.com/user-attachments/assets/9ae2e3b4-96d2-4b1c-9e54-e27cc6f28f8e" />
+
+
 | # | Método | URL | Status-line | `Content-Length` / `Transfer-Encoding` | Body presente? |
 |---|--------|-----|-------------|-----------------------------------------|----------------|
-| 1 | GET    | `http://httpbin.org/status/200` | [...] | [...] | [sim/não] |
-| 2 | GET    | `http://httpbin.org/redirect-to?status_code=301&url=/get` | [...] | [...] | [sim/não] |
-| 3 | GET    | `http://httpbin.org/status/404` | [...] | [...] | [sim/não] |
-| 4 | GET    | `http://httpbin.org/status/418` | [...] | [...] | [sim/não] |
-| 5 | GET    | `http://httpbin.org/status/500` | [...] | [...] | [sim/não] |
-| 6 | GET    | `http://httpbin.org/status/503` | [...] | [...] | [sim/não] |
+| 1 | GET    | [http://httpbin.org/status/200](http://httpbin.org/status/200) | [HTTP/1.1 200 OK] | [0] | [não] |
+| 2 | GET    | [http://httpbin.org/redirect-to](http://httpbin.org/redirect-to)... | [HTTP/1.1 301 Moved Permanently] | [0] | [não] |
+| 3 | GET    | `[http://httpbin.org/status/404](http://httpbin.org/status/404)` | [HTTP/1.1 418 I'M A TEAPOT] | [135] | [sim] |
+| 4 | GET    | `[http://httpbin.org/status/418](http://httpbin.org/status/418)` | [HTTP/1.1 500 INTERNAL SERVER ERROR] | [0] | [não] |
+| 5 | GET    | `[http://httpbin.org/status/500](http://httpbin.org/status/500)` | [HTTP/1.1 503 SERVICE UNAVAILABLE] | [0] | [não] |
+| 6 | GET    | `[http://httpbin.org/status/503](http://httpbin.org/status/503)` | [HTTP/1.1 304 Not Modified] | [0 | [não] |
 | 7 | GET    | `http://example.com/` com `If-Modified-Since` | [...] | [...] | [sim/não] |
 
 ### Pergunta 4.1
 > Em qual dos status o corpo está ausente/tamanho zero? Isso é obrigatório pela especificação ou depende do servidor?
 
-**Resposta:** [...]
+**Resposta:** [o teste realizado, o corpo está ausente nos status 200, 301, 404, 500, 503 (especificamente nesta ferramenta httpbin) e obrigatoriamente no 304.
+
+De acordo com a especificação HTTP (RFC 9110), a ausência de corpo é obrigatória para o status 304 (Not Modified), bem como para as respostas 1xx e 204. Para os outros status (como 404 ou 500), a presença de um corpo (uma página de erro, por exemplo) depende da implementação do servidor, embora o httpbin escolha retornar vazio para simplificação.]
 
 ### Pergunta 4.2
 > No `301`, qual cabeçalho da resposta informa para onde ir? O que aconteceria se estivesse ausente?
 
-**Resposta:** [...]
+**Resposta:** [Cabeçalho: O cabeçalho é o Location.
+
+O que aconteceria: Se o cabeçalho Location estivesse ausente em um status 301 (Moved Permanently), o navegador ficaria "perdido". Como o código 301 indica um redirecionamento, sem a URL de destino, o navegador não saberia para onde encaminhar o usuário, resultando geralmente em uma página de erro do próprio browser ou em uma requisição interrompida.]
 
 ### Pergunta 4.3
 > Diferença semântica entre `200`, `304` e `404` do ponto de vista do cache do navegador.
 
-**Resposta:** [...]
+**Resposta:** [a diferença fundamental reside em como o navegador valida a necessidade de baixar o conteúdo novamente:
+
+200 OK (Carga Total): O navegador entende que o recurso foi obtido com sucesso do servidor. Se o cache estiver vazio ou expirado, o servidor envia o corpo completo do arquivo. O navegador então armazena essa nova versão para uso futuro.
+
+304 Not Modified (Validação de Cache): É o status mais importante para a eficiência. O navegador pergunta ao servidor: "Eu tenho uma versão guardada aqui, ela ainda vale?". Se o servidor responder 304, ele não envia o corpo do arquivo (tamanho zero), economizando banda. O navegador, então, usa a cópia que já possui no cache local.
+
+404 Not Found (Invalidação/Erro): Semanticamente, informa que o recurso não existe mais naquela URL. Para o cache, isso significa que qualquer versão anteriormente armazenada para esse endereço deve ser considerada inválida ou descartada, e o navegador não exibirá conteúdo antigo (obsoleto) para o usuário.]
 
 ---
 
 ## Atividade 5 — Identificação de cabeçalhos (`http://httpbin.org/response-headers?...` + `/gzip`)
 
 **Captura de tela (Inspectors → Headers):** `evidencias/atv5_headers.png`
+<img width="1537" height="771" alt="image" src="https://github.com/user-attachments/assets/a1336851-a4ec-4bf2-9000-584cd1c64d1c" />
+
 
 | Cabeçalho                    | Req/Resp | Valor capturado | Função em uma frase |
 |------------------------------|----------|------------------|----------------------|
-| `Host`                       | [...]    | [...]            | [...]                |
-| `User-Agent`                 | [...]    | [...]            | [...]                |
-| `Accept`                     | [...]    | [...]            | [...]                |
-| `Accept-Encoding`            | [...]    | [...]            | [...]                |
-| `Cookie`                     | [...]    | [...]            | [...]                |
-| `Server`                     | [...]    | [...]            | [...]                |
-| `Content-Type`               | [...]    | [...]            | [...]                |
-| `Content-Encoding`           | [...]    | [...]            | [...]                |
-| `Set-Cookie`                 | [...]    | [...]            | [...]                |
-| `Cache-Control`              | [...]    | [...]            | [...]                |
-| `Strict-Transport-Security`  | [...]    | [...]            | [...]                |
+| `Host`                       | [Req]    | [...httpbin.org]            | [Indica o nome de domínio do servidor para o qual a requisição está a ser enviada.]                |
+| `User-Agent`                 | [Req]    | [Mozilla/5.0 (Windows NT 10.0; ]            | [Identifica o navegador e o sistema operativo do cliente que faz a requisição]                |
+| `Accept`                     | [Req]    | [...text/html, application/xhtml+xml...]            | [ndica quais formatos de conteúdo o navegador está preparado para receber.]                |
+| `Accept-Encoding`            | [Req]    | [gzip, deflate]            | [Comunica ao servidor quais métodos de compressão o cliente suporta para diminuir o tráfego.]                |
+| `Cookie`                     | [Req]    | []            | [Envia informações de estado ou sessão previamente armazenadas para o servid]                |
+| `Server`                     | [Resp]    | [gunicorn/19.9.0]            | [dentifica o software de servidor web que gerou a resposta.]                |
+| `Content-Type`               | [Resp]    | [application/json]            | [Especifica que o formato do corpo da resposta enviada é um objeto JSON]                |
+| `Content-Encoding`           | [Resp]    | []            | [Mostra o tipo de compressão (como gzip) que foi aplicado ao corpo da mensagem.]                |
+| `Set-Cookie`                 | [Resp]    | []            | [Utilizado pelo servidor para solicitar que o navegador armazene um novo cookie.]                |
+| `Cache-Control`              | [Resp]    | [no-cache]            | [Indica que o navegador deve validar com o servidor se o conteúdo mudou antes de usar uma cópia em cache.]                |
+| `Strict-Transport-Security`  | [Resp]    | []            | [Força o uso exclusivo de conexões seguras (HTTPS) para o domínio em visitas futuras]                |
 
 ### Pergunta 5.1
 > `Content-Encoding: gzip`/`br` apareceu? Compare `Content-Length`, quando presente, com o conteúdo visível. O que explica a diferença?
 
-**Resposta:** [...]
+**Resposta:** [Não, o cabeçalho Content-Encoding não apareceu na resposta analisada. O valor capturado para o Content-Length foi de 123 bytes. Como não houve compressão, o Content-Length corresponde exatamente ao tamanho do corpo da mensagem entregue. Caso o Content-Encoding: gzip estivesse presente, o Content-Length indicaria o tamanho do arquivo compactado (menor), enquanto o conteúdo visível no navegador (após a descompressão) seria maior. O que explica essa diferença é o mecanismo de compressão do HTTP, que visa reduzir o tráfego de dados na rede.]
 
 ### Pergunta 5.2
 > Cliente envia `Accept: application/json` mas o recurso só existe em `text/html`. Qual status code esperar?
 
-**Resposta:** [...]
+**Resposta:** [O status code esperado é o 406 Not Acceptable. Este código indica que o servidor não consegue gerar uma resposta que atenda aos critérios de formato (MIME types) especificados pelo cliente no cabeçalho Accept da requisição]
 
 ### Pergunta 5.3
 > `Strict-Transport-Security` apareceu nas respostas HTTP? Por que esse cabeçalho está ausente neste fluxo? (Consulte a RFC 6797.) Qual é seu papel contra downgrades para HTTP puro?
 
-**Resposta:** [...]
+**Resposta:** [Não, o cabeçalho Strict-Transport-Security (HSTS) não apareceu. De acordo com a RFC 6797, este cabeçalho está ausente porque a conexão foi realizada via HTTP puro (porta 80). A especificação determina que os navegadores devem ignorar o HSTS se ele não for enviado através de uma conexão segura (HTTPS/TLS) para evitar que atacantes injetem cabeçalhos falsos. O papel do HSTS contra downgrades é instruir o navegador a converter automaticamente qualquer tentativa de acesso inseguro (http://) em seguro (https://) antes mesmo da requisição sair do computador do usuário, impedindo ataques que tentam forçar a comunicação em texto claro.]
 
 ---
 
