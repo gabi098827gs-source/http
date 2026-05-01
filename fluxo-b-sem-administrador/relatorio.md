@@ -74,40 +74,47 @@ O cabeçalho Content-Length não está presente na resposta, pois foi utilizado 
 ## Atividade 2 — Anatomia de um GET (`http://httpbin.org/get?...`)
 
 **Captura de tela:** `evidencias/atv2_raw.png`
+<img width="1494" height="799" alt="image" src="https://github.com/user-attachments/assets/11631963-fe70-428c-b121-a42c582896e8" />
+
 
 **Request-line completa:**
 
 ```http
-[colar aqui]
+GET /get?aluno=Maria&curso=redes HTTP/1.1
 ```
 
 **Cabeçalhos-chave capturados:**
 
 | Cabeçalho    | Valor                    |
 |--------------|--------------------------|
-| `Host`       | [...]                    |
-| `User-Agent` | [...]                    |
-| `Accept`     | [...]                    |
+| `Host`       | [httpbin.org]                    |
+| `User-Agent` | [Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36]                    |
+| `Accept`     | [text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,/;q=0.8,application/signed-exchange;v=b3;q=0.7]                    |
 
 **Campos do JSON de resposta:**
 
 ```json
 {
-  "args":    [colar valor],
-  "headers": [colar valor resumido],
-  "origin":  [colar valor]
+  "args": {
+    "aluno": "Maria",
+    "curso": "redes"
+  },
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/138.0.0.0"
+  },
+  "origin": "179.157.196.34"
 }
 ```
 
 ### Pergunta 2.1
 > O valor do campo `origin` corresponde a qual elemento da rede? Por que normalmente não é o IP local?
 
-**Resposta:** [...]
+**Resposta:** [O campo origin corresponde ao IP público da requisição na internet. Ele não é o IP local da máquina porque a comunicação passa por um roteador com NAT (Network Address Translation), que substitui o IP privado (ex: 192.168.x.x) por um IP público ao acessar a internet.]
 
 ### Pergunta 2.2
 > Compare o `User-Agent` enviado com o que aparece no JSON da resposta. Coincidem?
 
-**Resposta:** [...]
+**Resposta:** [Sim, coincidem. O valor do User-Agent enviado pelo navegador é o mesmo que aparece no JSON da resposta, pois o servidor apenas retorna os cabeçalhos recebidos na requisição.]
 
 ### Pergunta 2.3
 > Em `http://httpbin.org/headers`, liste até três cabeçalhos que o servidor vê mas **não aparecem** no Raw do request. De onde vêm? Se não encontrar três, explique por que o resultado pode variar.
@@ -116,67 +123,81 @@ O cabeçalho Content-Length não está presente na resposta, pois foi utilizado 
 
 | Cabeçalho visto pelo servidor | Origem provável | Observação |
 |-------------------------------|-----------------|------------|
-| [...]                         | [...]           | [...]      |
-| [...]                         | [...]           | [...]      |
-| [...]                         | [...]           | [...]      |
+| [X-Forwarded-For]                         | [roxy/rede (ou infraestrutura do servidor)]           | [Indica o IP original do cliente]      |
+| [X-Amzn-Trace-Id]                         | [Infraestrutura do servidor (AWS)]           | [Usado para rastreamento de requisições]      |
+| [Via]                         | [Proxy intermediário]           | [Indica que a requisição passou por intermediários]      |
 
 ---
 
 ## Atividade 3 — POST e envio de formulário (`http://httpbin.org/forms/post` → `/post`)
 
 **Captura de tela:** `evidencias/atv3_post_raw.png`
+<img width="1490" height="796" alt="image" src="https://github.com/user-attachments/assets/25f19fcf-2bbd-4891-b527-322a49e17972" />
+
 
 **Request-line do POST:**
 
 ```http
-[colar aqui]
+POST /post HTTP/1.1
 ```
 
 **Cabeçalhos do request:**
 
 | Cabeçalho        | Valor |
 |------------------|-------|
-| `Content-Type`   | [...] |
-| `Content-Length` | [...] |
+| `Content-Type`   | [application/x-www-form-urlencoded] |
+| `Content-Length` | [112] |
 
 **Corpo completo do request:**
 
 ```
-[colar aqui o body enviado]
+custname=Maria&custtel=13981465780&custemail=mm6@gmail.com&size=medium&topping=onion&delivery=20%3A00&comments=
 ```
 
 **Trecho do JSON de resposta (campo `form`):**
 
 ```json
 "form": {
-  [colar aqui]
+  "custname": "Maria",
+  "custtel": "13981465780",
+  "custemail": "mm6@gmail.com",
+  "size": "medium",
+  "topping": "onion",
+  "delivery": "20:00",
+  "comments": ""
 }
 ```
 
 ### Pergunta 3.1
 > Qual o formato do corpo? Como esse formato codifica caracteres especiais (espaço, acentos)?
 
-**Resposta:** [...]
+**Resposta:** [O formato do corpo é application/x-www-form-urlencoded. Nesse formato, os dados são enviados como pares chave=valor separados por &. Caracteres especiais são codificados usando percent-encoding, por exemplo: espaço pode ser representado como + ou %20, e caracteres como : são codificados como %3A.]
 
 ### Pergunta 3.2
 > Comparando **Request → WebForms** e **Request → Raw**: qual das duas corresponde literalmente aos bytes enviados no socket TCP?
 
-**Resposta:** [...]
+**Resposta:** [A aba Raw corresponde literalmente aos bytes enviados no socket TCP, pois mostra a requisição exatamente como foi transmitida. Já a aba WebForms é apenas uma representação organizada dos dados para facilitar a leitura]
 
 ### Pergunta 3.3 — Composer
 > Envie manualmente via Composer um `POST` para `http://httpbin.org/post` com JSON. Registre a resposta. Qual campo do JSON confirma que o servidor interpretou o JSON?
 
 **Captura de tela:** `evidencias/atv3_composer.png`
+<img width="1498" height="738" alt="image" src="https://github.com/user-attachments/assets/c8a852b7-b8f2-4d0b-8ff6-a998e390840d" />
+
+
 
 **Response JSON (trecho relevante):**
 
 ```json
 {
-  [colar aqui]
+  "json": {
+    "protocolo": "HTTP",
+    "versao": "1.1"
+  }
 }
 ```
 
-**Resposta:** [...]
+**Resposta:** [O campo json confirma que o servidor recebeu e interpretou corretamente o corpo da requisição, pois ele retorna exatamente os dados enviados no formato JSON.]
 
 ---
 
