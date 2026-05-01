@@ -285,37 +285,42 @@ O que aconteceria: Se o cabeçalho Location estivesse ausente em um status 301 (
 ## Atividade 6 — HTTP vs HTTPS (análise sem decriptação)
 
 **Captura de tela HTTP (`neverssl.com`):** `evidencias/atv6_http.png`
+<img width="1573" height="803" alt="image" src="https://github.com/user-attachments/assets/f0873009-69e5-4876-859a-03bda49f5c37" />
+
 **Captura de tela HTTPS (`https://httpbin.org/get`, apenas CONNECT):** `evidencias/atv6_https.png`
+<img width="469" height="339" alt="image" src="https://github.com/user-attachments/assets/080e06cc-a221-436e-8d95-09c4d22d64bf" />
+
 
 ### Pergunta 6.1
 > Que método HTTP aparece na sessão do `https://httpbin.org/get`? O que ele faz e por que existe?
 
-**Resposta:** [...]
+**Resposta:** [O método exibido corresponde ao CONNECT, apresentado no Fiddler como “Tunnel to”. Ele é utilizado para estabelecer um túnel TCP entre o cliente e o servidor, permitindo a comunicação segura via HTTPS. Esse método existe para que o proxy apenas intermedie a conexão criptografada, sem acessar o conteúdo da comunicação.]
 
 ### Pergunta 6.2
 > Tabela comparativa dos campos visíveis ao Fiddler em cada caso:
 
 | Campo                          | Visível em HTTP? | Visível em HTTPS (sem decriptação)? |
 |--------------------------------|------------------|-------------------------------------|
-| Método                         | [...]            | [...]                               |
-| URL completa (path + query)    | [...]            | [...]                               |
-| Cabeçalhos de request          | [...]            | [...]                               |
-| Corpo de request               | [...]            | [...]                               |
-| Status code                    | [...]            | [...]                               |
-| Cabeçalhos de response         | [...]            | [...]                               |
-| Corpo de response              | [...]            | [...]                               |
-| Host (via SNI, no `CONNECT`)   | [...]            | [...]                               |
-| IP e porta de destino          | [...]            | [...]                               |
+| Método                         | [sim]            | [nao]                               |
+| URL completa (path + query)    | [...[sim]            | [...[nao]                               |
+| Cabeçalhos de request          | [...[sim]            | [...[nao]                               |
+| Corpo de request               | [...[sim]            | [...[nao]                               |
+| Status code                    | [...[sim]            | [...[nao]                               |
+| Cabeçalhos de response         | [...[sim]            | [...[nao]                               |
+| Corpo de response              | [...[sim]            | [...[nao]                               |
+| Host (via SNI, no `CONNECT`)   | [...[sim]            | [...[sim]                               |
+| IP e porta de destino          | [...[sim]            | [...[sim]                               |
 
 ### Pergunta 6.3 (teórica)
 > O que você **veria** no Fiddler se tivesse privilégio de administrador e pudesse habilitar *Decrypt HTTPS traffic*? Indique telas/abas e justifique por que essa inspeção exige a instalação de um certificado raiz.
 
-**Resposta:** [...]
+**Resposta:** [e a opção Decrypt HTTPS traffic estivesse habilitada, o Fiddler passaria a exibir todas as informações da comunicação HTTPS, assim como ocorre no HTTP. Seria possível visualizar o método (GET/POST), a URL completa (com path e query), os cabeçalhos e o corpo da requisição e da resposta. Essas informações apareceriam nas abas Inspectors → Raw, Headers e JSON.
+Essa inspeção exige a instalação de um certificado raiz porque o proxy atua como um intermediário confiável (man-in-the-middle controlado), descriptografando e recriptografando os dados. Para que o navegador aceite essa interceptação sem erro de segurança, ele precisa confiar no certificado emitido pelo proxy.]
 
 ### Pergunta 6.4
 > Por que a técnica de decriptação dos *debugging proxies* **não** funcionaria contra um usuário se um atacante a tentasse sem instalar o certificado?
 
-**Resposta:** [...]
+**Resposta:** [A técnica não funcionaria sem a instalação do certificado porque os navegadores validam a autenticidade dos certificados digitais durante a conexão HTTPS. Se um atacante tentasse interceptar a comunicação sem que o certificado dele estivesse instalado como confiável, o navegador exibiria um aviso de segurança e bloquearia a conexão. Isso impede que terceiros consigam descriptografar o conteúdo sem o consentimento do usuário.]
 
 ---
 
@@ -359,6 +364,10 @@ O que aconteceria: Se o cabeçalho Location estivesse ausente em um status 301 (
 ## Atividade 8 — Manipulação com breakpoints
 
 **Captura de tela da edição do User-Agent:** `evidencias/atv8_ua_edit.png`
+<img width="1417" height="788" alt="image" src="https://github.com/user-attachments/assets/729c2183-2b80-451a-859f-c3274eb277a6" />
+
+
+
 
 **JSON de resposta após edição:**
 
@@ -371,52 +380,50 @@ O que aconteceria: Se o cabeçalho Location estivesse ausente em um status 301 (
 ### Pergunta 8.1
 > O servidor pode detectar que o `User-Agent` foi forjado? Discuta.
 
-**Resposta:** [...]
+**Resposta:** [Sim, o servidor pode detectar a falsificação, embora não seja algo imediato apenas pela leitura do cabeçalho User-Agent. A detecção geralmente ocorre através de uma técnica chamada Fingerprinting]
 
 ### Pergunta 8.2
 > Após editar a status-line de `200 OK` para `404 Not Found`, o que o navegador exibe? Comente o papel do proxy como MITM.
 
 **Captura de tela:** `evidencias/atv8_status_edit.png`
+<img width="1520" height="738" alt="image" src="https://github.com/user-attachments/assets/f6480f78-b87b-4c04-8e6e-db357ece2bab" />
 
-**Resposta:** [...]
+
+**Resposta:** [pós alterar a status-line de 200 OK para 404 Not Found, o navegador passa a exibir uma página de erro indicando que o recurso não foi encontrado, mesmo que o servidor tenha retornado originalmente sucesso. Isso ocorre porque o proxy intercepta e modifica a resposta antes que ela chegue ao navegador. Nesse contexto, o proxy atua como um intermediário do tipo man-in-the-middle (MITM), sendo capaz de visualizar e alterar tanto requisições quanto respostas.
+]
 
 ### Pergunta 8.3
 > Confirme que todos os breakpoints foram desabilitados.
 
-- [ ] Breakpoints desabilitados ao final (Shift+F11)
+- [ -] Breakpoints desabilitados ao final (Shift+F11)
 
 ---
 
 ## Atividade 9 — Redirecionamento HTTP → HTTPS
 
 **Captura de tela:** `evidencias/atv9_redir.png`
+<img width="1349" height="757" alt="image" src="https://github.com/user-attachments/assets/2e1339ea-643e-452e-b02e-ea71f6853874" />
 
-**Status-line da resposta a `http://httpbin.org/redirect-to?status_code=301&url=https%3A%2F%2Fhttpbin.org%2Fget`:**
 
-```http
-[colar aqui, ex: HTTP/1.1 301 Moved Permanently]
-```
 
-**Cabeçalho `Location` da resposta:**
-
-```
-Location: [colar aqui]
-```
 
 ### Pergunta 9.1
 > Código de status e cabeçalho que direcionaram o navegador para `https://`.
 
-**Resposta:** [...]
+**Resposta:** [Status-line: HTTP/1.1 301 Moved Permanently  Cabeçalho Location: https://httpbin.org/get]
 
 ### Pergunta 9.2
 > Além do redirecionamento 3xx, qual outro mecanismo/cabeçalho faz o navegador passar a forçar HTTPS em visitas futuras? Cite a RFC.
 
-**Resposta:** [...]
+**Resposta:** [O cabeçalho é Strict-Transport-Security (HSTS).
+Ele informa ao navegador que todas as futuras conexões com aquele domínio devem usar HTTPS, mesmo que o usuário digite “http://”.]
 
 ### Pergunta 9.3
 > Se esse cabeçalho fosse enviado por uma resposta servida via HTTP puro, o navegador deveria obedecer? Justifique com base na RFC.
 
-**Resposta:** [...]
+**Resposta:** [Não.
+Segundo a RFC 6797, o cabeçalho Strict-Transport-Security só é aceito quando recebido por uma conexão HTTPS válida.
+Se for enviado por HTTP puro, o navegador ignora o cabeçalho, justamente para evitar ataques de downgrade ou falsificação de políticas de segurança.]
 
 ---
 
@@ -424,23 +431,41 @@ Location: [colar aqui]
 
 ### 1. Ordem dos elementos em uma mensagem HTTP/1.1. O que separa cabeçalhos do corpo?
 
-[resposta]
+[ mensagem HTTP segue esta ordem:
+
+Linha inicial (Status-Line ou Request-Line)
+
+Cabeçalhos (Headers)
+
+Corpo (Body)
+
+Os cabeçalhos são separados do corpo por uma linha em branco — ou seja, um par de caracteres CRLF (\r\n\r\n).]
 
 ### 2. Por que `Host` é obrigatório em HTTP/1.1 mas era opcional em HTTP/1.0?
 
-[resposta]
+[Em HTTP/1.0 cada servidor geralmente atendia apenas um site por IP, então o Host era opcional.
+Já em HTTP/1.1, com o uso de virtual hosts (vários domínios no mesmo IP), o cabeçalho Host tornou-se obrigatório para o servidor saber qual site o cliente quer acessar.]
 
 ### 3. Diferença entre `401 Unauthorized` e `403 Forbidden`.
 
-[resposta]
+[401 Unauthorized: o cliente não está autenticado ou forneceu credenciais inválidas; o servidor pede autenticação.
+
+403 Forbidden: o cliente está autenticado, mas não tem permissão para acessar o recurso.]
 
 ### 4. Um `POST` enviado duas vezes produz o mesmo efeito? E um `PUT`? Justifique em termos de idempotência.
 
-[resposta]
+[POST: não é idempotente — enviar duas vezes pode criar dois recursos ou duplicar ações.
+
+PUT: é idempotente — enviar o mesmo conteúdo várias vezes produz o mesmo resultado (substitui o recurso pelo mesmo estado).]
 
 ### 5. Por que HTTPS permite ainda que um observador saiba qual site está sendo visitado? (SNI, DNS)
 
-[resposta]
+[Mesmo com HTTPS, o nome do host pode ser revelado por:
+
+SNI (Server Name Indication): o nome do domínio é enviado em texto claro durante o handshake TLS.
+
+DNS: as consultas de resolução de nome geralmente não são criptografadas (a menos que use DNS over HTTPS ou DNS over TLS).
+Por isso, um observador ainda pode saber qual site está sendo acessado.]
 
 ### 6. O que muda com `Content-Encoding: gzip`? Onde os dados são compactados e descompactados?
 
@@ -448,19 +473,31 @@ Location: [colar aqui]
 
 ### 7. Impacto prático de `Cache-Control: no-store`.
 
-[resposta]
+[Esse cabeçalho instrui o navegador e proxies a não armazenar nenhuma parte da resposta em cache.
+Impacto prático: cada vez que o recurso for acessado, o cliente terá que buscar novamente no servidor. É usado em dados sensíveis (ex.: páginas de login, informações bancárias) para evitar que fiquem guardados em disco ou memória.]
 
 ### 8. Como um debugging proxy decifra HTTPS sem violar a criptografia, e por que isso exige cooperação do usuário (e por que, justamente, você não pôde executar essa etapa)?
 
-[resposta]
+Um proxy de debugging (como Fiddler ou Burp) atua como “man-in-the-middle” autorizado:
+
+Ele gera um certificado raiz falso e o usuário instala esse certificado no sistema.
+
+Assim, o navegador confia no proxy como se fosse o servidor real.
+
+O proxy estabelece duas conexões TLS: uma com o cliente e outra com o servidor, descriptografando e recriptografando no meio.[]
 
 ### 9. Exemplo de cabeçalho de request que o navegador envia automaticamente, sem a página pedir.
 
-[resposta]
+[Um exemplo é o User-Agent, que identifica o navegador e sistema operacional.
+Outro exemplo comum: Accept-Language, indicando o idioma preferido do usuário.]
 
 ### 10. Se fosse automatizar a inspeção via script, qual ferramenta alternativa escolheria? Por quê?
 
-[resposta]
+[Uma alternativa seria o cURL ou o Python com a biblioteca requests.
+
+São ferramentas leves, automatizáveis e permitem capturar headers e corpo de respostas facilmente.
+
+Diferente de proxies gráficos, podem ser integradas em scripts para testes repetitivos ou pipelines.]
 
 ### 11. (Exclusiva do Fluxo B) Três cabeçalhos de segurança que não aparecem ou não fazem sentido em respostas HTTP puro. Para cada um, o que aconteceria se enviado por um servidor HTTP? (Cite RFC 6797 para HSTS.)
 
@@ -468,9 +505,9 @@ Location: [colar aqui]
 
 | Cabeçalho | Comportamento esperado sobre HTTP | Referência |
 |-----------|-----------------------------------|-----------|
-| [...]     | [...]                             | [...]     |
-| [...]     | [...]                             | [...]     |
-| [...]     | [...]                             | [...]     |
+| [...Strict-Transport-Security (HSTS)]     | [...gnorado pelo navegador se enviado via HTTP, pois só é aceito em conexões HTTPS válidas. Evita ataques de downgrade.]                             | [...RFC 6797]     |
+| [...Set-Cookie: ...; Secure]     | [...O navegador não armazena cookies com a flag Secure se recebidos por HTTP, já que só devem ser enviados em conexões HTTPS.]                             | [...RFC 6265]     |
+| [...Upgrade-Insecure-Requests]     | [...Não faz sentido em HTTP puro, pois instrui o navegador a converter recursos inseguros em HTTPS. Se não houver HTTPS, não há efeito prático.]                             | [...****]     |
 
 ---
 
@@ -489,6 +526,7 @@ Location: [colar aqui]
 **Parágrafo: por que a remoção de certificado é dispensável neste fluxo e por que seria obrigatória para o aluno administrador:**
 
 [redigir, em até 5 linhas, com base na seção 4.6 do readme.md]
+A remoção do certificado não é necessária neste fluxo porque o navegador já voltou ao modo seguro (HTTPS-First/HTTPS-Only) e não há proxy ativo interceptando conexões. Como o Fiddler/mitmproxy/HTTP Toolkit foi fechado e a configuração de proxy desativada, não existe risco de manter certificados falsos confiados. Para um aluno administrador, porém, seria obrigatório remover o certificado raiz instalado, pois esse permanece válido no sistema e poderia ser explorado por terceiros se não fosse revogado.
 
 - [ ] HTTPS-First Mode / HTTPS-Only Mode reabilitado no navegador
 - [ ] Fiddler / mitmproxy / HTTP Toolkit fechado (porta de proxy liberada)
