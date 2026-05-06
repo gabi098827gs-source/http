@@ -69,7 +69,7 @@ Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7
 ### Pergunta 1.2
 > Qual foi o `Content-Length` da resposta? Se ele não apareceu, registre `Transfer-Encoding`, versão do protocolo ou outro indício observado. O corpo retornado é HTML, texto puro, JSON ou binário? Como você descobriu?
 
-O cabeçalho Content-Length não está presente na resposta, pois foi utilizado o cabeçalho Transfer-Encoding: chunked, indicando que o corpo foi enviado em blocos de tamanho variável. O corpo retornado é um documento HTML, conforme identificado pelo cabeçalho Content-Type: text/html, mas ele se apresenta inicialmente em formato binário comprimido devido ao uso de Content-Encoding: gzip. Essa característica é confirmada visualmente pelos caracteres ilegíveis na aba "Raw" e pelo aviso do Fiddler informando que o corpo da resposta precisa ser decodificado.
+Oooo cabeçalho Content-Length não está presente na resposta, pois foi utilizado o cabeçalho Transfer-Encoding: chunked, indicando que o corpo foi enviado em blocos de tamanho variável. O corpo retornado é um documento HTML, conforme identificado pelo cabeçalho Content-Type: text/html, mas ele se apresenta inicialmente em formato binário comprimido devido ao uso de Content-Encoding: gzip. Essa característica é confirmada visualmente pelos caracteres ilegíveis na aba "Raw" e pelo aviso do Fiddler informando que o corpo da resposta precisa ser decodificado.
 
 ## Atividade 2 — Anatomia de um GET (`http://httpbin.org/get?...`)
 
